@@ -141,7 +141,7 @@ FDWKqueueBackend::del(int idx)
 		nochanges--;
 		if (rridx[idx] < nochanges)
 		{
-			int oidx;
+			intptr_t oidx;
 
 			oidx = (intptr_t)(kqchanges[nochanges].udata);
 			if (kqchanges[nochanges].filter == EVFILT_READ &&
