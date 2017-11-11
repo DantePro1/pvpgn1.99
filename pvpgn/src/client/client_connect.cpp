@@ -141,6 +141,9 @@ int get_defversioninfo(char const * progname, char const * clienttag, unsigned i
     *gameversion = 0;
     *exeinfo = "";
     *checksum = 0;
+	
+	if (std::strcmp(clienttag,CLIENTTAG_BNCHATBOT)==0)
+	   return 0;
 
     std::fprintf(stderr,"%s: unsupported clienttag \"%s\"\n",progname,clienttag);
     // aaron: dunno what we should return in case of this.. but returning nothing was definetly wrong
@@ -155,7 +158,7 @@ namespace pvpgn
 namespace client
 {
 
-extern int client_connect(char const * progname, char const * servname, unsigned short servport, char const * cdowner, char const * cdkey, char const * clienttag, struct sockaddr_in * saddr, unsigned int * sessionkey, unsigned int * sessionnum, char const * archtag, char const * gamelang)
+extern int client_connect(char const * progname, char const * servname, unsigned short servport, char const * cdowner, char const * cdkey, char const * clienttag, int ignoreversion, struct sockaddr_in * saddr, unsigned int * sessionkey, unsigned int * sessionnum, char const * archtag, char const * gamelang)
 {
     struct hostent * host;
     char const *     username;
@@ -328,6 +331,10 @@ extern int client_connect(char const * progname, char const * servname, unsigned
 	*sessionkey = bn_int_get(rpacket->u.server_authreq_109.sessionkey);
 	*sessionnum = bn_int_get(rpacket->u.server_authreq_109.sessionnum);
 	/* FIXME: also get filename and equation */
+	
+	if (!ignoreversion)
+	{
+		
 
 	if (!(packet = packet_create(packet_class_bnet)))
 	{
@@ -368,6 +375,7 @@ extern int client_connect(char const * progname, char const * servname, unsigned
       {
          std::fprintf(stderr,"AUTHREPLY_109 failed - closing connection\n");
          goto error_rpacket;
+	  }
       }
     }
     else
